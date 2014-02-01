@@ -16,15 +16,25 @@ $(function() {
       text : "No Msg",
       from : "empty@gmail.com",
       timeToLive : "No Date",
-      locx : 45,
-      locy : 45
+      location: null,
     },
 
     initialize: function(options) {
     },
 
-
+  },{
+    // userInput
+    createMessage: function(userInput) {
+      this.todos.create({
+        text: this.input.val(),
+        from:   ["hi"]
+      });
+      var point = options.currUser.get("location")
+      message.set("location", point);
+    },
+    
   });
+
 
   // Group Model to collect posts from people
   var Group = Parse.Object.extend("Group", {
@@ -44,10 +54,12 @@ $(function() {
       user: null,
       groups: [] ,
       messages: [], // recieved by person
+      friends: []
     },
 
     initialize: function(options) {
       alert("Person created");
+
     }
   });
 
@@ -81,6 +93,30 @@ $(function() {
       this.save({done: !this.get("done")});
     }
   });
+
+// Handle GeoLocation
+  if ("geolocation" in navigator) {
+    /* geolocation is available */
+    // navigator.geolocation.getCurrentPosition(success,error,options);
+    function geo_success(position) {
+      console.log("Watch "+position.coords.latitude+ ":"+position.coords.longitude);
+    }
+
+    function geo_error() {
+      alert("Sorry, no position available.");
+    }
+
+    var geo_options = {
+      enableHighAccuracy: true, 
+      maximumAge        : 30000, 
+      timeout           : 1000
+    };
+
+    var wpid = navigator.geolocation.watchPosition(geo_success, geo_error, geo_options);
+      } else {
+      /* geolocation IS NOT available */
+      alert("Geolocation unavailable")
+    }
 
   // This is the transient application state, not persisted on Parse
   var AppState = Parse.Object.extend("AppState", {
