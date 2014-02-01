@@ -10,13 +10,6 @@ $(function() {
   Parse.initialize("vNaKAj525AGW0A6TfEtmGCbyG6PneRTvgVuAqzOB",
                    "UavSiykqrWpBP7ZNGjoNl9SKdp2VEc5dajOoVTUF");
 
-  var Debug = true
-  function LOGGER(message) {
-    if (Debug) {
-      console.log(message)
-    }
-  }
-
   var Message = Parse.Object.extend("Message", {
     defaults: {
       text : "No Msg",
@@ -26,7 +19,7 @@ $(function() {
     },
 
     initialize: function(options) {
-      LOGGER("Message Created")
+      debug.log("Message Created")
     },
 
   },{
@@ -51,7 +44,7 @@ $(function() {
     },
 
     initialize: function(options) {
-      LOGGER("Group created");
+      debug.log("Group created");
     }
   });
 
@@ -65,7 +58,7 @@ $(function() {
     },
 
     initialize: function(options) {
-      LOGGER("Person created");
+      debug.log("Person created");
 
     }
   });
@@ -76,7 +69,7 @@ $(function() {
     },
 
     initialize: function(options) {
-      LOGGER("PublicForum Created");
+      debug.log("PublicForum Created");
     }
   });
 
@@ -110,11 +103,11 @@ $(function() {
     /* geolocation is available */
     // navigator.geolocation.getCurrentPosition(success,error,options);
     function geo_success(position) {
-      LOGGER("Watch "+position.coords.latitude+ ":"+position.coords.longitude);
+      debug.log("Watch "+position.coords.latitude+ ":"+position.coords.longitude);
     }
 
     function geo_error() {
-      LOGGER("Sorry, no position available.");
+      debug.log("Sorry, no position available.");
     }
 
     var geo_options = {
@@ -126,7 +119,7 @@ $(function() {
     var wpid = navigator.geolocation.watchPosition(geo_success, geo_error, geo_options);
       } else {
       /* geolocation IS NOT available */
-      LOGGER("Geolocation unavailable")
+      debug.log("Geolocation unavailable")
     }
 
   // This is the transient application state, not persisted on Parse
