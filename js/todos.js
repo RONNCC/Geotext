@@ -31,7 +31,6 @@ $(function() {
         this.set({"timeToLive": this.defaults.timeToLive});
       }
     },
-
   });
 
 
@@ -56,7 +55,7 @@ $(function() {
       user: "Uninitialized Person@gmail",
       groups: [] ,
       messages: [], // recieved by person
-      friends: []
+      contacts: []
     },
 
     initialize: function(options) {
@@ -64,7 +63,23 @@ $(function() {
       if (!this.get("user")) {
         debug.log("Invalid User: No user input")
       }
-    }
+    },
+
+    addContact: function(emailOfContact) {
+      debug.log("Adding contact:" + emailOfContact)
+      this.get("contacts").push(emailOfContact)
+    },
+
+    removeContact: function(emailOfContact) {
+      debug.log("Remove contact:" + emailOfContact)
+      for (var i = 0; i < this.get("contacts").length; i++) {
+          if (this.get("contacts")[i] === emailOfContact) {
+              this.get("contacts").splice(i, 1);
+              i--;
+          }
+      }
+      return this;
+    },
   });
 
   var PublicForum = Parse.Object.extend("PublicForum", {
@@ -77,9 +92,6 @@ $(function() {
     }
   });
 
-  // var publicForum = new PublicForum()
-  // var group1 = new Group()
-  // var person = new Person()
 
   // Todo Model
   // ----------
@@ -110,7 +122,8 @@ $(function() {
     /* geolocation is available */
     // navigator.geolocation.getCurrentPosition(success,error,options);
     function geo_success(position) {
-      debug.log("Watch "+position.coords.latitude+ ":"+position.coords.longitude);
+      debug.log("Watch "+position.coords.latitude+ ":"+position.coords.longitude
+);
     }
 
     function geo_error() {
