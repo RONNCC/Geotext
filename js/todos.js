@@ -10,6 +10,54 @@ $(function() {
   Parse.initialize("vNaKAj525AGW0A6TfEtmGCbyG6PneRTvgVuAqzOB",
                    "UavSiykqrWpBP7ZNGjoNl9SKdp2VEc5dajOoVTUF");
 
+
+  var Message = Parse.Object.extend("Message", {
+    defaults: {
+      text : "No Msg",
+      from : "empty@gmail.com",
+      timeToLive : "No Date",
+      locx : 45,
+      locy : 45
+    },
+
+    initialize: function(options) {
+    },
+
+
+  });
+
+  // Group Model to collect posts from people
+  var Group = Parse.Object.extend("Group", {
+    defaults: {
+      name: "New Group",
+      messages: []
+    },
+
+    initialize: function(options) {
+      alert("Group created");
+    }
+  });
+
+  // Person Model
+  var Person = Parse.Object.extend("Person", {
+    defaults: {
+      user: null,
+      groups: [] ,
+      messages: [], // recieved by person
+    },
+
+    initialize: function(options) {
+      alert("Person created");
+    }
+  });
+
+  var PublicForum = Parse.Object.extend("PublicForum", {
+    defaults: {
+      messages: []
+    }
+  });
+
+
   // Todo Model
   // ----------
 
