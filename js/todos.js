@@ -10,21 +10,38 @@ $(function() {
   Parse.initialize("vNaKAj525AGW0A6TfEtmGCbyG6PneRTvgVuAqzOB",
                    "UavSiykqrWpBP7ZNGjoNl9SKdp2VEc5dajOoVTUF");
 
+  var Debug = true
+  function LOGGER(message) {
+    if (Debug) {
+      console.log(message)
+    }
+  }
 
   var Message = Parse.Object.extend("Message", {
     defaults: {
       text : "No Msg",
       from : "empty@gmail.com",
       timeToLive : "No Date",
-      locx : 45,
-      locy : 45
+      location: null,
     },
 
     initialize: function(options) {
+      LOGGER("Message Created")
     },
 
-
+  },{
+    // userInput
+    createMessage: function(userInput) {
+      this.todos.create({
+        text: this.input.val(),
+        from:   ["hi"]
+      });
+      var point = options.currUser.get("location")
+      message.set("location", point);
+    },
+    
   });
+
 
   // Group Model to collect posts from people
   var Group = Parse.Object.extend("Group", {
@@ -34,7 +51,7 @@ $(function() {
     },
 
     initialize: function(options) {
-      alert("Group created");
+      LOGGER("Group created");
     }
   });
 
@@ -44,16 +61,22 @@ $(function() {
       user: null,
       groups: [] ,
       messages: [], // recieved by person
+      friends: []
     },
 
     initialize: function(options) {
-      alert("Person created");
+      LOGGER("Person created");
+
     }
   });
 
   var PublicForum = Parse.Object.extend("PublicForum", {
     defaults: {
-      messages: []
+      messages: [],
+    },
+
+    initialize: function(options) {
+      LOGGER("PublicForum Created");
     }
   });
 
@@ -81,6 +104,30 @@ $(function() {
       this.save({done: !this.get("done")});
     }
   });
+
+// Handle GeoLocation
+  if ("geolocation" in navigator) {
+    /* geolocation is available */
+    // navigator.geolocation.getCurrentPosition(success,error,options);
+    function geo_success(position) {
+      LOGGER("Watch "+position.coords.latitude+ ":"+position.coords.longitude);
+    }
+
+    function geo_error() {
+      LOGGER("Sorry, no position available.");
+    }
+
+    var geo_options = {
+      enableHighAccuracy: true, 
+      maximumAge        : 30000, 
+      timeout           : 1000
+    };
+
+    var wpid = navigator.geolocation.watchPosition(geo_success, geo_error, geo_options);
+      } else {
+      /* geolocation IS NOT available */
+      LOGGER("Geolocation unavailable")
+    }
 
   // This is the transient application state, not persisted on Parse
   var AppState = Parse.Object.extend("AppState", {
