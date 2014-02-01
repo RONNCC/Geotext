@@ -19,27 +19,26 @@ $(function() {
 
   var Message = Parse.Object.extend("Message", {
     defaults: {
-      text : "No Msg",
+      text : "Empty Msg",
       from : "empty@gmail.com",
-      timeToLive : "No Date",
+      timeToLive : 1000,
       location: null,
     },
 
+    // Check params
     initialize: function(options) {
       LOGGER("Message Created")
+      if (!this.get("from")) {
+        LOGGER("Missing from user")
+      } else if (!this.get("location")) {
+        LOGGER("Missing Current Location")
+      } else if (!this.get("text")) {
+        this.set({"text": this.defaults.text});
+      } else if (!this.get("timeToLive")) {
+        this.set({"timeToLive": this.defaults.timeToLive});
+      }
     },
 
-  },{
-    // userInput
-    createMessage: function(userInput) {
-      this.todos.create({
-        text: this.input.val(),
-        from:   ["hi"]
-      });
-      var point = options.currUser.get("location")
-      message.set("location", point);
-    },
-    
   });
 
 
@@ -52,13 +51,16 @@ $(function() {
 
     initialize: function(options) {
       LOGGER("Group created");
+      if (!this.get("name")) {
+        this.set({"name": this.defaults.name});
+      }
     }
   });
 
   // Person Model
   var Person = Parse.Object.extend("Person", {
     defaults: {
-      user: null,
+      user: "Uninitialized Person@gmail",
       groups: [] ,
       messages: [], // recieved by person
       friends: []
@@ -66,7 +68,9 @@ $(function() {
 
     initialize: function(options) {
       LOGGER("Person created");
-
+      if (!this.get("user")) {
+        LOGGER("Invalid User: No user input")
+      }
     }
   });
 
@@ -80,6 +84,9 @@ $(function() {
     }
   });
 
+  // var publicForum = new PublicForum()
+  // var group1 = new Group()
+  // var person = new Person()
 
   // Todo Model
   // ----------
