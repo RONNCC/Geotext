@@ -415,33 +415,73 @@ $(function() {
 
     logIn: function(e) {
       var self = this;
-      var username = this.$("#login-username").val();
+      var username = this.$("#login-email").val();
       var password = this.$("#login-password").val();
-      
-      Parse.User.logIn(username, password, {
-        success: function(user) {
-          new ManageTodosView();
-          self.undelegateEvents();
-          delete self;
-        },
+     
 
-        error: function(user, error) {
-          self.$(".login-form .error").html("Invalid username or password. Please try again.").show();
-          this.$(".login-form button").removeAttr("disabled");
-        }
-      });
+	  var uservalidated = false;
+      var userquery = Parse.Query(Parse.User);
+	  userquery.equalTo("username",username);
+	  userquery.count({
+		success: function(count){
+			if(count != 1)
+			{
+				debug.log("multiple users with same username???");
+				return Parse.Promise.error(
+				  new Parse.Error(Parse.Error.OTHER_CAUSE,
+					  "There are somehow multiple users" + 
+					  "with the same userid."));
+			}
+			else
+			{
+				userquery.find({
+					success: function(results){
+						uservalidated = results[0].emailVerified;
+					},
+					error:function(error) {
+					 self.$(".login-form .error").html(
+			  		"You didn't validate your email D: Go do that! ErrorMsg:"+
+					error.message).show();
+						
+					}
+				})
+			}
+		},
 
-      this.$(".login-form button").attr("disabled", "disabled");
+		error: function(error){
+          self.$(".login-form .error").html(
+			  "Your username does not exist :/ ErrorMsg:" + error.message).show();
+		}
+		})
+ 
+	  if(uservalidated)
+	  {
+		  Parse.User.logIn(username, password, {
+			success: function(user) {
+			  new ManageTodosView();
+			  self.undelegateEvents();
+			  delete self;
+			},
+
+			error: function(user, error) {
+			  self.$(".login-form .error").html("Invalid username or password. Please try again.").show();
+			 //no. it's annoying to have the login button disable itself
+			  // this.$(".login-form button").removeAttr("disabled");
+			}
+		  });
+	  }
+	  //why would we disable it - it doesn't make much sense
+      //this.$(".login-form button").attr("disabled", "disabled");
 
       return false;
     },
 
     signUp: function(e) {
       var self = this;
-      var username = this.$("#signup-username").val();
+      var username = this.$("#signup-email").val();
       var password = this.$("#signup-password").val();
-      
-      Parse.User.signUp(username, password, { ACL: new Parse.ACL() }, {
+
+      Parse.User.signUp(username, password, { ACL: new Parse.ACL(), email:username }, {
         success: function(user) {
           new ManageTodosView();
           self.undelegateEvents();
